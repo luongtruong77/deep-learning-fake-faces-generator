@@ -1,7 +1,5 @@
 import streamlit as st
-import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 
@@ -22,8 +20,9 @@ st.sidebar.write('This fun generator is built using **Deep Convolutional Generat
                  ' The codes can be found [**HERE**]'
                  '(https://github.com/luongtruong77/deep-learning-fake-faces-generator).')
 st.sidebar.write('The model was trained with over **200k** 64x64 images from the [CelebA dataset]'
-                 '(http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) on **95** epochs using **Tesla P100-PCIE** '
-                 'GPU on Google Colab in ~23hours. The quality of generated images will typically improve upon'
+                 '(http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) on different number of epochs number of training '
+                 'instances using **Tesla P100** '
+                 'GPU on Google Cloud in ~24hours. The quality of generated images will typically improve upon'
                  'increasing number of epochs (try 200 for instance).')
 
 st.write('### **What are GANs?**')
@@ -39,33 +38,65 @@ st.write("The generator will improve upon process and gets 'smarter' every epoch
          "differentiate correctly between fake and real images, that's when we somewhat succeed.")
 st.write("Let's generate some fake faces!")
 st.write('---')
+
+#############################################
+
 st.write('**Note:** The generator typically takes around 1-5 sec to load depends on your device, your internet '
          'connection and your browser.')
-if st.button('GENERATE (30e_40k_128x128)'):
-    generator_30e_40k_128x128 = keras.models.load_model('models/generator_30epochs_40k_128x128.h5')
-    latent_dim = 128
-    random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
-    generated_images = generator_30e_40k_128x128(random_latent_vectors)
+st.write('Understanding the generating buttons:')
+st.write('- 150e: 150 epochs were run on.')
+st.write('- 100k: 100,000 training data points (images) were trained on.')
+st.write('- 64x64: Resolution of training images were trained on.')
+choices = st.radio('Please choose how you want to generate images:', ('10 images at a time', '1 image at a time'))
 
-    fig, ax = plt.subplots(figsize=(10, 10))
+latent_dim = 128
+generator_150e_100k_64x64 = keras.models.load_model('models/generator_150epochs_100k_64x64.h5')
+generator_60e_200k_64x64 = keras.models.load_model('models/generator_60epochs_64x64.h5')
 
-    st.image(keras.preprocessing.image.array_to_img(generated_images[0]), width=200)
-    plt.axis('off')
+if choices == '10 images at a time':
 
-    st.pyplot(fig)
+    if st.button('GENERATE (150e_100k_64x64)'):
+        random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
+        generated_images = generator_150e_100k_64x64(random_latent_vectors)
+        plt.figure(figsize=(14, 5))
+        for i in range(10):
+            plt.subplot(2, 5, i + 1)
+            plt.imshow(generated_images[i])
+            plt.axis('off')
+        st.pyplot()
 
-if st.button('GENERATE (60e_200k_64x64)'):
-    generator_60e_200k_64x64 = keras.models.load_model('models/generator_60epochs_64x64.h5')
-    latent_dim = 128
-    random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
-    generated_images = generator_60e_200k_64x64(random_latent_vectors)
+    if st.button('GENERATE (60e_200k_64x64)'):
+        random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
+        generated_images = generator_60e_200k_64x64(random_latent_vectors)
+        plt.figure(figsize=(14, 5))
+        for i in range(10):
+            plt.subplot(2, 5, i + 1)
+            plt.imshow(generated_images[i])
+            plt.axis('off')
+        st.pyplot()
 
-    fig, ax = plt.subplots(figsize=(10, 10))
+    if st.button('GENERATE (100e_200k_64x64'):
+        st.write('Coming soon...')
+        st.write('I am working on the next generator with 100 epochs and 200,000 training images.')
 
-    st.image(keras.preprocessing.image.array_to_img(generated_images[0]), width=200)
-    plt.axis('off')
+elif choices == '1 image at a time':
 
-    st.pyplot(fig)
+    if st.button('GENERATE (150e_100k_64x64)'):
+        random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
+        generated_images = generator_150e_100k_64x64(random_latent_vectors)
+        fig, ax = plt.subplots(figsize=(10, 10))
+        st.image(keras.preprocessing.image.array_to_img(generated_images[0]), width=200)
+        plt.axis('off')
+        st.pyplot(fig)
 
+    if st.button('GENERATE (60e_200k_64x64)'):
+        random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
+        generated_images = generator_60e_200k_64x64(random_latent_vectors)
+        fig, ax = plt.subplots(figsize=(10, 10))
+        st.image(keras.preprocessing.image.array_to_img(generated_images[0]), width=200)
+        plt.axis('off')
+        st.pyplot(fig)
 
-
+    if st.button('GENERATE (100e_200k_64x64'):
+        st.write('Coming soon...')
+        st.write('I am working on the next generator with 100 epochs and 200,000 training images.')
