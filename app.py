@@ -41,7 +41,7 @@ st.write("Let's generate some fake faces!")
 st.write('---')
 st.write('**Note:** The generator typically takes around 1-5 sec to load depends on your device, your internet '
          'connection and your browser.')
-if st.button('GENERATE'):
+if st.button('GENERATE (30e_40k_128x128)'):
     generator_30e_40k_128x128 = keras.models.load_model('models/generator_30epochs_40k_128x128.h5')
     latent_dim = 128
     random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
@@ -53,5 +53,19 @@ if st.button('GENERATE'):
     plt.axis('off')
 
     st.pyplot(fig)
+
+if st.button('GENERATE (60e_200k_64x64)'):
+    generator_60e_200k_64x64 = keras.models.load_model('models/generator_60epochs_64x64.h5')
+    latent_dim = 128
+    random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
+    generated_images = generator_60e_200k_64x64(random_latent_vectors)
+
+    fig, ax = plt.subplots(figsize=(10, 10))
+
+    st.image(keras.preprocessing.image.array_to_img(generated_images[0]), width=200)
+    plt.axis('off')
+
+    st.pyplot(fig)
+
 
 
