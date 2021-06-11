@@ -50,19 +50,31 @@ st.write('- 64x64: Resolution of training images were trained on.')
 choices = st.radio('Please choose how you want to generate images:', ('10 images at a time', '1 image at a time'))
 
 latent_dim = 128
+
 generator_150e_100k_64x64 = keras.models.load_model('models/generator_150epochs_100k_64x64.h5')
 generator_60e_200k_64x64 = keras.models.load_model('models/generator_60epochs_64x64.h5')
-
+list_images = []
 if choices == '10 images at a time':
+
 
     if st.button('GENERATE (150e_100k_64x64)'):
         random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
         generated_images = generator_150e_100k_64x64(random_latent_vectors)
-        plt.figure(figsize=(14, 5))
+
         for i in range(10):
-            plt.subplot(2, 5, i + 1)
-            plt.imshow(generated_images[i])
+            list_images.append(generated_images[i])
+
+        # if len(list_images) >= 30:
+        #     list_images = list_images[10:]
+        # else:
+        #     pass
+        st.write(len(list_images))
+        plt.figure(figsize=(12, 5 * (len(list_images) // 10)))
+        for i in range(len(list_images)):
+            plt.subplot(len(list_images) // 5, 5, i + 1)
+            plt.imshow(list_images[i])
             plt.axis('off')
+
         st.pyplot()
 
     if st.button('GENERATE (60e_200k_64x64)'):
