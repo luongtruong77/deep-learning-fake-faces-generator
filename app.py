@@ -51,64 +51,52 @@ choices = st.radio('Please choose how you want to generate images:', ('10 images
 
 latent_dim = 128
 
+random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
 generator_150e_100k_64x64 = keras.models.load_model('models/generator_150epochs_100k_64x64.h5')
-generator_60e_200k_64x64 = keras.models.load_model('models/generator_60epochs_64x64.h5')
-list_images = []
+generator_60e_200k_64x64 = keras.models.load_model('models/generator_79epochs_200k_64x64.h5')
+generator_100e_160k_64x64 = keras.models.load_model('models/generator_100epochs_160k_64x64.h5')
+
+
+def plot_image(list_images):
+    fig, ax = plt.subplots(figsize=(10, 10))
+    st.image(keras.preprocessing.image.array_to_img(list_images[0]), width=200)
+    plt.axis('off')
+    st.pyplot(fig)
+
+
+def plot_multiple_images(num_images, list_images):
+    plt.figure(figsize=(14, 5))
+    for _ in range(num_images):
+        plt.subplot(2, 5, _ + 1)
+        plt.imshow(list_images[_])
+        plt.axis('off')
+    st.pyplot()
+
+
 if choices == '10 images at a time':
 
-
     if st.button('GENERATE (150e_100k_64x64)'):
-        random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
         generated_images = generator_150e_100k_64x64(random_latent_vectors)
-
-        for i in range(10):
-            list_images.append(generated_images[i])
-
-        # if len(list_images) >= 30:
-        #     list_images = list_images[10:]
-        # else:
-        #     pass
-        st.write(len(list_images))
-        plt.figure(figsize=(12, 5 * (len(list_images) // 10)))
-        for i in range(len(list_images)):
-            plt.subplot(len(list_images) // 5, 5, i + 1)
-            plt.imshow(list_images[i])
-            plt.axis('off')
-
-        st.pyplot()
+        plot_multiple_images(10, generated_images)
 
     if st.button('GENERATE (60e_200k_64x64)'):
-        random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
         generated_images = generator_60e_200k_64x64(random_latent_vectors)
-        plt.figure(figsize=(14, 5))
-        for i in range(10):
-            plt.subplot(2, 5, i + 1)
-            plt.imshow(generated_images[i])
-            plt.axis('off')
-        st.pyplot()
+        plot_multiple_images(10, generated_images)
 
-    if st.button('GENERATE (100e_200k_64x64'):
-        st.write('Coming soon...')
-        st.write('I am working on the next generator with 100 epochs and 200,000 training images.')
+    if st.button('GENERATE (100e_160k_64x64'):
+        generated_images = generator_100e_160k_64x64(random_latent_vectors)
+        plot_multiple_images(10, generated_images)
 
 elif choices == '1 image at a time':
 
     if st.button('GENERATE (150e_100k_64x64)'):
-        random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
         generated_images = generator_150e_100k_64x64(random_latent_vectors)
-        fig, ax = plt.subplots(figsize=(10, 10))
-        st.image(keras.preprocessing.image.array_to_img(generated_images[0]), width=200)
-        plt.axis('off')
-        st.pyplot(fig)
+        plot_image(generated_images)
 
     if st.button('GENERATE (60e_200k_64x64)'):
-        random_latent_vectors = tf.random.normal(shape=(10, latent_dim))
         generated_images = generator_60e_200k_64x64(random_latent_vectors)
-        fig, ax = plt.subplots(figsize=(10, 10))
-        st.image(keras.preprocessing.image.array_to_img(generated_images[0]), width=200)
-        plt.axis('off')
-        st.pyplot(fig)
+        plot_image(generated_images)
 
-    if st.button('GENERATE (100e_200k_64x64'):
-        st.write('Coming soon...')
-        st.write('I am working on the next generator with 100 epochs and 200,000 training images.')
+    if st.button('GENERATE (100e_160k_64x64'):
+        generated_images = generator_100e_160k_64x64(random_latent_vectors)
+        plot_image(generated_images)
